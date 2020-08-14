@@ -16,6 +16,9 @@ public class FishA : Fish
     public float acceleration = 0.1f;
     public float turningForce = 0.1f;
 
+    // DEBUG ONLY - REMOVE
+    public bool flee = false;
+
     private Rigidbody2D rb;
     
     // Start is called before the first frame update
@@ -34,38 +37,68 @@ public class FishA : Fish
 
         float distance = Vector2.Distance(gameObject.transform.position, target);
 
-        //if (distance < fleeRange)
-            //Flee(target);
-        if (distance < seekRange)
+        if(!flee)
             Seek(target);
         else
-            Idle(target);
+            Flee(target);
 
+        Turn();
     }
 
     // Replace the following functions with CalculateMove(Behaviour, target vector)? -> not relevant once FSM is implemented?
     void Seek(Vector2 target)
     {
+        //Vector2 desired = (target - myPosition).normalized * maxForce;
         Vector2 desired = target - myPosition;
-        desired.Normalize();
+        float distance = desired.magnitude;
         
+        if(distance < approachRange)
+        {
+            // Inside approach range -> slow down
+            desired = desired.normalized * maxSpeed * (distance / approachRange);
+            Debug.Log(distance/approachRange);
+        }
+        else
+        {
+            // Outside approach range -> maintain speed
+            desired = desired.normalized * maxSpeed;
+        }
+
         Vector2 steering = desired - rb.velocity;
+
+        //Debug.Log(steering.magnitude < maxForce);
+        //steering = (steering.magnitude < maxForce) ? steering : steering.normalized * maxForce;
+        //Debug.Log(steering);
+
+        steering /= rb.mass;
+        //rb.inertia?
         Vector2 newVelocity = rb.velocity + steering;
+        if (newVelocity.magnitude > maxSpeed)
+            newVelocity = newVelocity.normalized * maxSpeed;
+
 
         // Debug
-        Debug.DrawRay(transform.position, rb.velocity, Color.red);
-        Debug.DrawRay(transform.position, desired, Color.blue);
-        Debug.DrawRay(transform.position, steering, Color.green);
+        //Debug.DrawRay(transform.position, rb.velocity, Color.red);
+        //Debug.DrawRay(transform.position, desired, Color.blue);
+        //Debug.DrawRay(transform.position, steering, Color.green);
 
         Move(newVelocity);
     }
 
     void Flee(Vector2 target)
     {
-        Vector2 dir = myPosition - target;
-        dir.Normalize();
+        // Inverse of seek
+        Vector2 desired = (myPosition - target).normalized * maxSpeed;
 
-        Move(dir);
+        Vector2 steering = desired - rb.velocity;
+
+        steering /= rb.mass;
+
+        Vector2 newVelocity = rb.velocity + steering;
+        if (newVelocity.magnitude > maxSpeed)
+            newVelocity = newVelocity.normalized * maxSpeed;
+
+        Move(newVelocity);
     }
 
     void Idle(Vector2 target)
@@ -79,19 +112,18 @@ public class FishA : Fish
         // ???? just zeroing out the velocity here feels stupid
         //rb.velocity = Vector2.zero;
 
-
-        rb.AddForce(transform.up * maxSpeed);
-
-        Turn(newVelocity);
+        //rb.AddForce(transform.up * maxSpeed);
+        rb.velocity = newVelocity;
     }
 
-    void Turn(Vector2 velocity)
+    void Turn()
     {
         // Calculate rotation from velocity vector
-        float toRotation = (Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg - 90);
-        float rotation = Mathf.LerpAngle(rb.rotation, toRotation, Time.deltaTime * turningForce);
+        float toRotation = (Mathf.Atan2(rb.velocity.y, rb.velocity.x) * Mathf.Rad2Deg - 90);
+        // Turning force???
+        //float rotation = Mathf.LerpAngle(rb.rotation, toRotation, Time.deltaTime * turningForce);
          
-        rb.MoveRotation(rotation);
+        rb.MoveRotation(toRotation);
         
     }
 
