@@ -152,7 +152,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 1
   m_AngularDrag: 0
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -179,10 +179,9 @@ MonoBehaviour:
   seekRange: 20
   approachRange: 2.5
   fleeRange: 0.2
-  maxSpeed: 5
+  maxSpeed: 2
   acceleration: 1
   turningForce: 1
-  flee: 0
 --- !u!212 &458184069
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -360,7 +359,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 1
   m_AngularDrag: 0
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -387,10 +386,9 @@ MonoBehaviour:
   seekRange: 20
   approachRange: 2.5
   fleeRange: 0.2
-  maxSpeed: 5
+  maxSpeed: 2
   acceleration: 1
   turningForce: 1
-  flee: 0
 --- !u!212 &605197157
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -485,7 +483,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 1
   m_AngularDrag: 0
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -512,10 +510,9 @@ MonoBehaviour:
   seekRange: 20
   approachRange: 2.5
   fleeRange: 0.2
-  maxSpeed: 5
+  maxSpeed: 2
   acceleration: 1
   turningForce: 1
-  flee: 0
 --- !u!212 &720285752
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -610,7 +607,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 1
   m_AngularDrag: 0
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -637,10 +634,9 @@ MonoBehaviour:
   seekRange: 20
   approachRange: 2.5
   fleeRange: 0.2
-  maxSpeed: 5
+  maxSpeed: 2
   acceleration: 1
   turningForce: 1
-  flee: 0
 --- !u!212 &1127806442
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -735,7 +731,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 1
   m_AngularDrag: 0
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -762,10 +758,9 @@ MonoBehaviour:
   seekRange: 20
   approachRange: 2.5
   fleeRange: 0.2
-  maxSpeed: 5
+  maxSpeed: 2
   acceleration: 1
   turningForce: 1
-  flee: 0
 --- !u!212 &1595319879
 SpriteRenderer:
   m_ObjectHideFlags: 0
