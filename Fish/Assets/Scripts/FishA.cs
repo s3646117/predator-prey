@@ -11,6 +11,7 @@ public class FishA : Fish
     public float seekRange = 20f;
     public float approachRange = 2.5f;
     public float fleeRange = 0.2f;
+    public float arrivedRange = 0.5f;
 
     public float maxSpeed = 10f;
     public float acceleration = 0.1f;
@@ -20,6 +21,8 @@ public class FishA : Fish
     public bool flee = false;
 
     private Rigidbody2D rb;
+
+    public List<Node> path;
     
     // Start is called before the first frame update
     void Start()
@@ -32,7 +35,12 @@ public class FishA : Fish
     // Update is called once per frame
     void FixedUpdate()
     {
-        target = GetMousePosition();
+        if (path != null && path.Count > 0)
+            target = path[0].position;
+        else
+            target = GetComponent<Pathfinding>().target.position;
+            
+        //target = GetMousePosition();
         myPosition = gameObject.transform.position;
 
         float distance = Vector2.Distance(gameObject.transform.position, target);
@@ -52,11 +60,18 @@ public class FishA : Fish
         Vector2 desired = target - myPosition;
         float distance = desired.magnitude;
         
-        if(distance < approachRange)
+        if(distance < approachRange && distance > arrivedRange)
         {
             // Inside approach range -> slow down
             desired = desired.normalized * maxSpeed * (distance / approachRange);
             Debug.Log(distance/approachRange);
+        }
+        else if (distance < arrivedRange)
+        {
+            // Inside approach range -> slow down
+            desired = desired.normalized * maxSpeed * (distance / approachRange);
+            if(path.Count > 0)
+                path.RemoveAt(0);
         }
         else
         {
