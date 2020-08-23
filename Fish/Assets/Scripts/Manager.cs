@@ -14,7 +14,9 @@ public class Manager : MonoBehaviour
     {
         targetPosition = new Vector2(1, startPosY);
         target = Instantiate(targetPrefab, targetPosition, Quaternion.identity);
+       
     }
+
     void InputChangeTarget()
     {
         if (Input.GetMouseButtonDown(0))
