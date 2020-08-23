@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class FishA : Fish
 {
+
     public Vector2 myPosition;
     public Vector2 target;
     public Vector2 velocity;
@@ -11,19 +13,13 @@ public class FishA : Fish
     public float seekRange = 20f;
     public float approachRange = 2.5f;
     public float fleeRange = 0.2f;
-    public float arrivedRange = 0.5f;
 
     public float maxSpeed = 10f;
     public float acceleration = 0.1f;
     public float turningForce = 0.1f;
 
-    // DEBUG ONLY - REMOVE
-    public bool flee = false;
-
     private Rigidbody2D rb;
 
-    public List<Node> path;
-    
     // Start is called before the first frame update
     void Start()
     {
@@ -35,85 +31,44 @@ public class FishA : Fish
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (path != null && path.Count > 0)
-            target = path[0].position;
-        else
-            target = GetComponent<Pathfinding>().target.position;
-            
-        //target = GetMousePosition();
+        target = GetMousePosition();
         myPosition = gameObject.transform.position;
 
         float distance = Vector2.Distance(gameObject.transform.position, target);
 
-        if(!flee)
+        //if (distance < fleeRange)
+            //Flee(target);
+        if (distance < seekRange)
             Seek(target);
         else
-            Flee(target);
+            Idle(target);
 
-        Turn();
     }
+
 
     // Replace the following functions with CalculateMove(Behaviour, target vector)? -> not relevant once FSM is implemented?
     void Seek(Vector2 target)
     {
-        //Vector2 desired = (target - myPosition).normalized * maxForce;
         Vector2 desired = target - myPosition;
-        float distance = desired.magnitude;
+        desired.Normalize();
         
-        if(distance < approachRange && distance > arrivedRange)
-        {
-            // Inside approach range -> slow down
-            desired = desired.normalized * maxSpeed * (distance / approachRange);
-            Debug.Log(distance/approachRange);
-        }
-        else if (distance < arrivedRange)
-        {
-            // Inside approach range -> slow down
-            desired = desired.normalized * maxSpeed * (distance / approachRange);
-            if(path.Count > 0)
-                path.RemoveAt(0);
-        }
-        else
-        {
-            // Outside approach range -> maintain speed
-            desired = desired.normalized * maxSpeed;
-        }
-
         Vector2 steering = desired - rb.velocity;
-
-        //Debug.Log(steering.magnitude < maxForce);
-        //steering = (steering.magnitude < maxForce) ? steering : steering.normalized * maxForce;
-        //Debug.Log(steering);
-
-        steering /= rb.mass;
-        //rb.inertia?
         Vector2 newVelocity = rb.velocity + steering;
-        if (newVelocity.magnitude > maxSpeed)
-            newVelocity = newVelocity.normalized * maxSpeed;
-
 
         // Debug
-        //Debug.DrawRay(transform.position, rb.velocity, Color.red);
-        //Debug.DrawRay(transform.position, desired, Color.blue);
-        //Debug.DrawRay(transform.position, steering, Color.green);
+        Debug.DrawRay(transform.position, rb.velocity, Color.red);
+        Debug.DrawRay(transform.position, desired, Color.blue);
+        Debug.DrawRay(transform.position, steering, Color.green);
 
         Move(newVelocity);
     }
 
     void Flee(Vector2 target)
     {
-        // Inverse of seek
-        Vector2 desired = (myPosition - target).normalized * maxSpeed;
+        Vector2 dir = myPosition - target;
+        dir.Normalize();
 
-        Vector2 steering = desired - rb.velocity;
-
-        steering /= rb.mass;
-
-        Vector2 newVelocity = rb.velocity + steering;
-        if (newVelocity.magnitude > maxSpeed)
-            newVelocity = newVelocity.normalized * maxSpeed;
-
-        Move(newVelocity);
+        Move(dir);
     }
 
     void Idle(Vector2 target)
@@ -127,18 +82,19 @@ public class FishA : Fish
         // ???? just zeroing out the velocity here feels stupid
         //rb.velocity = Vector2.zero;
 
-        //rb.AddForce(transform.up * maxSpeed);
-        rb.velocity = newVelocity;
+
+        rb.AddForce(transform.up * maxSpeed);
+
+        Turn(newVelocity);
     }
 
-    void Turn()
+    void Turn(Vector2 velocity)
     {
         // Calculate rotation from velocity vector
-        float toRotation = (Mathf.Atan2(rb.velocity.y, rb.velocity.x) * Mathf.Rad2Deg - 90);
-        // Turning force???
-        //float rotation = Mathf.LerpAngle(rb.rotation, toRotation, Time.deltaTime * turningForce);
+        float toRotation = (Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg - 90);
+        float rotation = Mathf.LerpAngle(rb.rotation, toRotation, Time.deltaTime * turningForce);
          
-        rb.MoveRotation(toRotation);
+        rb.MoveRotation(rotation);
         
     }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -36,5 +37,6 @@ public class FlockAgent : MonoBehaviour
     {
         agentFlock.RemoveFlockAgent(this);
     }
+
 
 }
