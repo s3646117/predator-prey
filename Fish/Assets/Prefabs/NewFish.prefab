@@ -13,9 +13,10 @@ GameObject:
   - component: {fileID: 7219050663778376992}
   - component: {fileID: 6598747249805883036}
   - component: {fileID: 1709086984852184111}
+  - component: {fileID: -3853810528525905415}
   m_Layer: 0
   m_Name: NewFish
-  m_TagString: Untagged
+  m_TagString: Fish
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -29,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 7219050663778376995}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.184, y: -0.291, z: 0}
-  m_LocalScale: {x: 0.683, y: 0.7, z: 1}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -139,3 +140,30 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.96999997
+--- !u!114 &-3853810528525905415
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7219050663778376995}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1336b0e9628160d499c38786ba1d4df2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rb: {fileID: 0}
+  state: 0
+  velocity: {x: 0, y: 0}
+  target: {x: 0, y: 0}
+  seekRange: 20
+  fleeRange: 2
+  fleeSpeed: 6
+  myPosition: {x: 0, y: 0}
+  steeringForce: {x: 0, y: 0}
+  hookPosition: {x: 0, y: 0}
+  timeLeft: 3
+  timeCount: 0
+  fishPrefab: {fileID: 7219050663778376995}
+  fishPosition: {x: 0, y: 0}
+  fishNum: 10

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class FishFSM : MonoBehaviour
+public class FishFSM : FishStateMachine
 {
     public Agent agentPrefab;
     List<Agent> agents = new List<Agent>();
@@ -35,14 +35,14 @@ public class FishFSM : MonoBehaviour
     }
 
     Status status;
-    public GameObject gameobject;
+
     public Vector2 target;
     public Rigidbody2D rb;
     public Vector2 targetPosition;
     private float mSpeed = 5.0f;
     public float turningForce = 0.4f;
 
-    public float disToHook = 40.0f;
+    public float disToHook = 20.0f;
     public Vector2 myPosition;
 
     public float SeekRange = 20.0f;
@@ -65,15 +65,15 @@ public class FishFSM : MonoBehaviour
         squareNeighborRadius = neighborRadius * neighborRadius;
         squareAvoidanceRadius = squareNeighborRadius * avoidanceRadiusMultiplier * avoidanceRadiusMultiplier;
 
-
+        myPosition = gameObject.transform.position;
 
         /* status */
         status = Status.Flocking;
 
         /* target */
-        target = GetTargetPosition();
 
-        // Create flock
+
+        // Create fish group
         for (int i = 0; i < startingCount; ++i)
         {
             float x = Random.Range(-5f, 5f);
@@ -91,18 +91,18 @@ public class FishFSM : MonoBehaviour
             agents.Add(agent);
         }
 
-        myPosition = gameObject.transform.position;
+
     }
 
     // Update is called once per frame
     void Update()
     {
         /* target */
-        target = GetTargetPosition();
         Vector2 sf = new Vector2();
    
         Obstacle = GameObject.FindGameObjectWithTag("Obstacle").transform.position;
 
+        myPosition = gameObject.transform.position;
         checkDisToTarget(targetPosition);
 
         timeLeft -= Time.deltaTime;
@@ -112,30 +112,28 @@ public class FishFSM : MonoBehaviour
             timeLeft += accelerationTime;
         }
 
+
         switch (status)
         {
             case Status.Flocking:
                 flock();
-                if(feelHook()==true)
+                if (feelHook() == true)
                 {
-                    status = Status.Seek;
+                    Debug.Log("Feel hook");
+                    status = Status.Flee;
                 }
-  
-                break;
-            case Status.Flee:
 
                 break;
+            case Status.Flee:
+                flee();
+                break;
             case Status.Seek:
-                Chase(targetPosition);
+
                 break;
         }
 
     }
 
-    private void FixedUpdate()
-    {
-        targetPosition = GameObject.FindGameObjectWithTag("Hook").transform.position;
-    }
     public void flock()
     {
         foreach (Agent agent in agents)
@@ -151,8 +149,63 @@ public class FishFSM : MonoBehaviour
         }
     }
 
+    public float fleeSpeedS = 3.0f;
+    public void flee()
+    {
+        Vector2 dirV = (myPosition - getHookPosition()).normalized*3.0f ;
 
+        foreach(Agent agent in agents)
+        {
+            agent.Move(fleeGet(dirV));
 
+        }
+    }
+
+    public void seek()
+    {
+        foreach (Agent agent in agents)
+        {
+            
+        }
+    }
+
+    float fleeRange =5.0f;
+    bool decelerateOnStop = true;
+    float timeToTarget = 0.1f;
+    public Vector2 fleeGet(Vector2 targetPosition)
+    {
+        Vector2 mPosition = gameObject.transform.position;
+
+        /* get direction */
+        Vector2 dir = mPosition - targetPosition;
+/*        dir.Normalize();*/
+        if (dir.magnitude > fleeRange)
+        {
+            if (decelerateOnStop && rb.velocity.magnitude > 0.001f)
+            {
+                if (dir.magnitude > maxFleeSpeed)
+                {
+                    dir = -rb.velocity / timeToTarget;
+                }
+                return dir;
+            }
+            else
+            {
+                rb.velocity = Vector2.zero;
+                return Vector2.zero;
+            }
+        }
+        return fleeSpeed(dir);
+
+    }
+
+    public float maxFleeSpeed = 3.0f;
+    public Vector2 fleeSpeed(Vector2 velocity)
+    {
+        velocity.Normalize();
+        velocity *= maxFleeSpeed;
+        return velocity;
+    }
     List<Transform> GetNearbyObjects(Agent agent)
     {
         List<Transform> context = new List<Transform>();
@@ -163,6 +216,19 @@ public class FishFSM : MonoBehaviour
                 context.Add(c.transform);
         }
         return context;
+    }
+
+
+  
+
+    public Vector2 Seek(Vector2 target)
+    {
+        Vector2 desired = target - myPosition;
+        desired.Normalize();
+
+        Vector2 steering = desired - rb.velocity;
+        Vector2 newVelocity = rb.velocity + steering;
+        return newVelocity;
     }
 
     // Add/remove flock agent
@@ -178,7 +244,7 @@ public class FishFSM : MonoBehaviour
 
     public bool feelHook()
     {
-        float distance = Vector2.Distance(myPosition, GetTargetPosition());
+        float distance = Vector2.Distance(myPosition, target);
         if (distance < disToHook)
         {
             return true;
@@ -186,38 +252,6 @@ public class FishFSM : MonoBehaviour
         else
         { return false; }
     }
-
-
-
-
-    public void Chase(Vector3 target)
-    {
-        Vector2 desired = target - gameObject.transform.position;
-        desired.Normalize();
-
-        Vector2 steering = desired - rb.velocity;
-        Vector2 newVelocity = rb.velocity + steering;
-        Move(newVelocity);
-        Turn(newVelocity);
-
-    }
-
-
-    void Avoid(Vector2 target)
-    {
-        Vector2 dir = (Vector2)gameObject.transform.position - target;
-        dir.Normalize();
-
-        Move(dir);
-    }
-
-
-    float checkDisToTarget(Vector2 targetPosition)
-    {
-        float dis = Vector2.Distance(gameObject.transform.position, targetPosition);
-        return dis;
-    }
-
 
     bool feelObstacle()
     {
@@ -230,37 +264,16 @@ public class FishFSM : MonoBehaviour
             return false;
     }
 
-
-
-    void Move(Vector2 targetPosition)
+    public Vector2 getHookPosition()
     {
-        rb.AddForce(transform.up * maxSpeed);
-
-        Turn(targetPosition);
+        targetPosition = GameObject.FindGameObjectWithTag("Hook").transform.position;
+        return targetPosition;
     }
 
-    void Turn(Vector2 velocity)
+
+    float checkDisToTarget(Vector2 targetPosition)
     {
-        float toRotation = (Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg - 90);
-        float rotation = Mathf.LerpAngle(rb.rotation, toRotation, Time.deltaTime * turningForce);
-
-        rb.MoveRotation(rotation);
+        float dis = Vector2.Distance(gameObject.transform.position, targetPosition);
+        return dis;
     }
-
-    public Vector2 GetTargetPosition()
-    {
-        Vector2 targetPos = gameobject.transform.position;
-        return targetPos;
-    }
-
-    void Seek(Vector2 target)
-    {
-        Vector2 desired = target - myPosition;
-        desired.Normalize();
-
-        Vector2 steering = desired - rb.velocity;
-        Vector2 newVelocity = rb.velocity + steering;
-        Move(newVelocity);
-    }
-
-    }
+}
