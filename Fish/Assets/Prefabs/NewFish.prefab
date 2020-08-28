@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7219050663778376992}
   - component: {fileID: 6598747249805883036}
   - component: {fileID: 1709086984852184111}
-  - component: {fileID: -3853810528525905415}
+  - component: {fileID: 1674357946993046327}
   m_Layer: 0
   m_Name: NewFish
   m_TagString: Fish
@@ -140,7 +140,7 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.96999997
---- !u!114 &-3853810528525905415
+--- !u!114 &1674357946993046327
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -152,18 +152,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1336b0e9628160d499c38786ba1d4df2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rb: {fileID: 0}
-  state: 0
-  velocity: {x: 0, y: 0}
-  target: {x: 0, y: 0}
-  seekRange: 20
-  fleeRange: 2
-  fleeSpeed: 6
-  myPosition: {x: 0, y: 0}
-  steeringForce: {x: 0, y: 0}
-  hookPosition: {x: 0, y: 0}
-  timeLeft: 3
-  timeCount: 0
+  hookPrefab: {fileID: 917804540075306437, guid: fb76498994e3aad489a27d78e7f9213e,
+    type: 3}
   fishPrefab: {fileID: 7219050663778376995}
-  fishPosition: {x: 0, y: 0}
-  fishNum: 10
+  fishPoisition: {x: 0, y: 0}
+  fishNum: 50
+  randNum: 0
+  states: 1
+  move: {fileID: 1674357946993046327}
+  force: {x: 0, y: 0}
+  currentTime: 300
+  rb: {fileID: 0}
+  state: 1
+  velocity: {x: 0, y: 0}
+  hookPosition: {x: 0, y: 0}
+  seekRange: 20
+  fleeRange: 5
+  fleeSpeed: 9
+  avoidSpeed: 3
+  myPosition: {x: 0, y: 0}
+  getHookPosition: {x: 0, y: 0}
+  manager: {fileID: 0}
+  flee: 1
+  wander: 1
+  chase: 1
+  timeCount: 0
+  putHook: 1
+  velocitySelf: {x: 0, y: 0}
+  flockingDist: 3

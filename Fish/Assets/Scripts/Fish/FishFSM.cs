@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class FishFSM : FishStateMachine
+public class FishFSM : MonoBehaviour
 {
     public Agent agentPrefab;
     List<Agent> agents = new List<Agent>();
