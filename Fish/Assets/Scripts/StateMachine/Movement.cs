@@ -176,29 +176,6 @@ public class Movement : Manager
 
         }
     }
-/*    public Vector2 AvoidForce(Vector2 dir)
-    {
-        Vector2 acceleration = Vector2.zero;
-        Vector2[] rayDirs = new Vector2[3];
-        rayDirs[0] = dir.normalized;
-
-        float orientation = Mathf.Atan2(rb.velocity.y, rb.velocity.x);
-
-        rayDirs[1] = rotateToVector(orientation + sideAngle * Mathf.Deg2Rad);
-        rayDirs[1] = rotateToVector(orientation - sideAngle * Mathf.Deg2Rad);
-        RaycastHit hit;
-        if(!FindObstacle(rayDirs,out hit))
-        {
-            return acceleration;
-        }
-        Vector2 tPosition = hit.point + hit.normal * wallAvoidDistance;
-        Vector3 cross = Vector3.Cross(rb.velocity, hit.normal);
-        if(cross.magnitude<0.005f)
-        {
-            tPosition = new Vector2(-hit.normal.y, hit.normal.x);
-        }
-        return SeekForce(tPosition);
-    }*/
 
     RaycastHit hitFoward, hitRight, hitLeft;
     //射线长度，控制距离障碍物多远的时候开始触发躲避
