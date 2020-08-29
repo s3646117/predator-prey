@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class Test : MonoBehaviour
 {
-    public GameObject hook;
-    public Vector2 hookPosition;
+    public float speed = 1.0f;
     void Start()
     {
         
@@ -14,18 +13,23 @@ public class Test : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        getHookPosition();
+        if (Input.GetKey(KeyCode.W))
+        {
+            transform.Translate(Vector2.up * Time.deltaTime * speed);
+        }
+        else if (Input.GetKey(KeyCode.S))
+        {
+            transform.Translate(Vector2.up * Time.deltaTime * -speed);
+        }
+        else if (Input.GetKey(KeyCode.A))
+        {
+            transform.Translate(Vector3.right * Time.deltaTime * -speed);
+        }
+        else if (Input.GetKey(KeyCode.D))
+        {
+            transform.Translate(Vector3.right * Time.deltaTime * speed);
+        }
     }
 
-    public Vector2 getHookPosition()
-    {
-        hookPosition = GameObject.FindGameObjectWithTag("Hook").transform.position;
-        return hookPosition;
-    }
 
-    public Vector2 getTargetPosition()
-    {
-        hookPosition = hook.transform.position;
-        return hookPosition;
-    }
 }

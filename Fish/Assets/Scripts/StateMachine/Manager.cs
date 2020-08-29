@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEditorInternal;
 using UnityEngine;
 
-public enum States
+public enum ManagerStates
 {
-    Chase,
     Wander,
     Seek,
-    Flee
+    Flee,
+    Chase
 }
 public class Manager : MonoBehaviour
 {
@@ -20,70 +20,40 @@ public class Manager : MonoBehaviour
     public GameObject fishPrefab;
     public Vector2 fishPoisition;
 
-    public int fishNum = 50;
+    public int fishNum = 10;
     const float AgentDensity = 0.08f;
 
     public int randNum;
 
-    public States states;
+    public ManagerStates states;
 
     public Movement move;
     public Vector2 force;
-
+    public bool getRipple;
     public float currentTime=120;
+    public GameObject attractedFish;
     private void Start()
     {
         target = Instantiate(hookPrefab, targetPosition, Quaternion.identity);
         createAgent();
-/*        getAttractedFish();*/
-        states = States.Wander;
-
     }
 
     void Update()
     {
         InputChangeTarget();
-
-        switch (states)
-        {
-            case States.Wander:
-                move.wander = true;
-                break;
-            case States.Flee:
-                move.flee = true;
-                getAttractedFish();
-                break;
-            case States.Chase:
-                move.chase = true;
-                break;
-
-        }
-
+        move.wander = true;
+        move.state = moveState.Wander;
     }
-
+    
     public GameObject getAttractedFish()
     {
         GameObject[] fishGroup = GameObject.FindGameObjectsWithTag("Fish");
-        randNum = Random.Range(0, fishNum);
-        GameObject fish;
-        fish = fishGroup[randNum];
-        Debug.Log(randNum);
+        randNum = Random.Range(0, fishGroup.Length);
+        GameObject fish = fishGroup[randNum];
         return fish;
     }
 
-    public bool feelHook()
-    {
-        float distance = Vector2.Distance(move.hookPosition, move.myPosition);
-        if (distance <= move.fleeRange)
-        {
-            return true;
-        }
 
-        else
-        {
-            return false;
-        }
-    }
 
     bool leaveState = false;
     IEnumerator counter()

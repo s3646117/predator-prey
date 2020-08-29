@@ -152,18 +152,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1336b0e9628160d499c38786ba1d4df2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hookPrefab: {fileID: 917804540075306437, guid: fb76498994e3aad489a27d78e7f9213e,
-    type: 3}
-  fishPrefab: {fileID: 7219050663778376995}
-  fishPoisition: {x: 0, y: 0}
-  fishNum: 50
-  randNum: 0
-  states: 1
-  move: {fileID: 1674357946993046327}
-  force: {x: 0, y: 0}
-  currentTime: 300
   rb: {fileID: 0}
-  state: 1
+  state: 0
   velocity: {x: 0, y: 0}
   hookPosition: {x: 0, y: 0}
   seekRange: 20
@@ -172,11 +162,12 @@ MonoBehaviour:
   avoidSpeed: 3
   myPosition: {x: 0, y: 0}
   getHookPosition: {x: 0, y: 0}
-  manager: {fileID: 0}
+  rc: {fileID: 2008480913487420853, guid: 45f8a73fcec1d6442a5243ebc26c8f8e, type: 3}
+  manager: {fileID: 4885833879210716943, guid: e7e754467f542024c8a39c4627caccf4, type: 3}
   flee: 1
   wander: 1
   chase: 1
   timeCount: 0
+  gotRipple: 1
   putHook: 1
-  velocitySelf: {x: 0, y: 0}
   flockingDist: 3

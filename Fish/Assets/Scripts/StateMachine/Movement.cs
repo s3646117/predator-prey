@@ -3,18 +3,16 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using UnityEngine;
 
-public enum Status
+public enum moveState
 {
-    Chase,
     Wander,
-    Seek,
-    Flee
-    
+    Flee,
+    Chase
 }
-public class Movement : Manager
+public class Movement : MonoBehaviour
 {
     public Rigidbody2D rb;
-    public Status state;
+    public moveState state;
     public Vector2 velocity;
     public Vector2 hookPosition;
 
@@ -31,10 +29,11 @@ public class Movement : Manager
 
     private float timeLeft;
 
+    public RippleClick rc;
 
-    private GameObject attractedFish;
+    private GameObject attractFish;
     public Manager manager;
-
+  
     const float AgentDensity = 0.08f;
 
 
@@ -43,100 +42,93 @@ public class Movement : Manager
     public bool chase = false;
     public bool timeCount;
 
-
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         velocity = Vector2.zero;
+        attractFish = manager.getAttractedFish();
     }
-
+    public bool gotRipple;
     private void Update()
     {
         myPosition = gameObject.transform.position;
         getHookPosition = GameObject.FindGameObjectWithTag("Hook").transform.position;
         float distance = Vector2.Distance(gameObject.transform.position, hookPosition);
-        feelHook();
 
-        updaeState();
+  
+        checkRippleClick();
         switch (state)
         {
-            case Status.Wander:
-                steeringForce = FlockForce();
-                avoid();
+            case moveState.Wander:
+                if(wander==true)
+                {
+                    /* Debug.Log("Wander State");*/
+
+                    /* Flocking */
+                    /*  TODO */
+
+                    /* Check hook position */
+                    feelHook();
+                    if(feelHook()==true)
+                    {
+                        wander = true;
+
+                        /* Debug.Log("State change to Flee");*/
+                        /* if near hook, FLEE */
+                        state = moveState.Flee;
+                    }
+
+                }
                 break;
 
-            case Status.Flee:
-                steeringForce = FlockForce();
-                steeringForce += FleeForce();
-                avoid();
+            case moveState.Flee:
+                if(flee==true)
+                {
+                    /*  Debug.Log("Flee State");*/
+                    steeringForce += FleeForce();
+
+                    /* Debug.Log("Count");*/
+                    /* count second */
+                    coounter();
+
+                    /* Debug.Log("Back to Wander State");*/
+                    /* After count, back to wander */
+                    state = moveState.Wander;
+
+                    /* After Flee and back to wander, Check Ripple */
+                    checkRippleClick();
+                    if (checkRippleClick() == true)
+                    {
+                        /* Debug.Log("Change to Chase state");*/
+                        /* Go to Chase state */
+                        state = moveState.Chase;
+                    }
+                }
                 break;
 
-            case Status.Chase:
-                steeringForce = FlockForce();
-                steeringForce = SeekForce(hookPosition);
+            case moveState.Chase:
+                if (chase==true)
+                {
+                    Debug.Log("move state is: chase");
+
+                    /* Choose a attract fish & change tag to destroy, at Hook script check collider to destroy*/
+                    attractFish = manager.getAttractedFish();
+                    attractFish.tag = "Destroy";
+
+                    /* The Fish chase to Hook? */
+                    /*  TODO */
+                    chase = false;
+                }
+
                 break;
-
-
         }
-
-/*        steeringForce = SeekForce(getHookPosition);*/
-        Move(steeringForce);
-
-        
-    }
-
-    void updaeState()
-    {
-        leaveS = false;
-        putHook = false;
-        wander = false;
-        chase = false;
-
-
-        if (wander==true)
-        {
-            state = Status.Wander;
-            flee = false;
-            if(feelHook()==true)
-            {
-                flee = true;
-                wander = false;
-/*                Debug.Log("hook");*/
-            }
-        }
-        if (flee == true)
-        {
-            state = Status.Flee;
-            count = true;
-            if(count==true)
-            {
-                StartCoroutine(coounter());
-                count = false;
-            }
-
-        }
-        if (chase == true)
-        {
-            state = Status.Chase;
-        }
-    }
-
-    bool leaveS = false;
-    bool count = false;
-    IEnumerator coounter()
-    {
-        yield return new WaitForSeconds(3f);
-        state = Status.Wander;
-        flee = false;
 
     }
 
-    public bool putHook;
-    public bool feelHook()
-    {
 
-        float distance = Vector2.Distance(move.hookPosition, move.myPosition);
-        if (distance <= move.fleeRange && !putHook)
+    public bool checkRippleClick()
+    {
+        if(Input.GetMouseButtonDown(1))
         {
             return true;
         }
@@ -146,6 +138,31 @@ public class Movement : Manager
             return false;
         }
     }
+
+
+
+    IEnumerator coounter()
+    {
+        yield return new WaitForSeconds(3f);
+
+    }
+
+    public bool putHook;
+    public bool feelHook()
+    {
+        float distance = Vector2.Distance(getHookPosition, myPosition);
+        if (distance <= fleeRange)
+        {
+            return true;
+        }
+
+        else
+        {
+            return false;
+        }
+    }
+
+
     public Vector2 SeekForce(Vector2 targetPosition)
     {
         Vector2 myPosition = transform.position;
@@ -163,89 +180,7 @@ public class Movement : Manager
         return force-rb.velocity;
     }
 
-    float mainWhiskerLen = 1.25f;
-    float wallAvoidDistance = 0.5f;
-    float sideWhiskerLen = 0.7f;
-    float sideAngle = 45f;
-    float maxAcceleration = 40f;
 
-    public void Avoid()
-    {
-        if(Physics2D.Raycast(transform.position,transform.forward,5))
-        {
-
-        }
-    }
-
-    RaycastHit hitFoward, hitRight, hitLeft;
-    //射线长度，控制距离障碍物多远的时候开始触发躲避
-    float rayLength;
-    //碰到障碍物时的反向作用力
-    Vector3 reverseForce;
-    //物体自身的速度
-    public Vector2 velocitySelf;
-    //判断是否在进行转弯
-    bool IsTurn;
-
-    public void avoid()
-    {
-
-        Debug.DrawLine(transform.position, transform.position + transform.forward, Color.cyan);
-        Debug.DrawLine(transform.position, transform.position + (transform.forward + transform.right).normalized, Color.cyan);
-        Debug.DrawLine(transform.position, transform.position + (transform.forward - transform.right).normalized, Color.cyan);
-
-        if (Physics.Raycast(transform.position, transform.forward, out hitFoward, rayLength))
-        {
-            //Raycast.normal表示光线射到此表面时，在此处的法线单位向量
-            reverseForce = hitFoward.normal * (rayLength - (hitFoward.point - transform.position).magnitude);
-            IsTurn = true;
-        }
-        if (Physics.Raycast(transform.position, transform.forward + transform.right, out hitFoward, rayLength))
-        {
-            reverseForce = hitFoward.normal * (rayLength - (hitFoward.point - transform.position).magnitude);
-            IsTurn = true;
-        }
-        if (Physics.Raycast(transform.position, transform.forward - transform.right, out hitFoward, rayLength))
-        {
-            reverseForce = hitFoward.normal * (rayLength - (hitFoward.point - transform.position).magnitude);
-            IsTurn = true;
-        }
-        if (!IsTurn)
-        {
-            reverseForce = Vector3.zero;
-            //通过这个控制当物体躲避完障碍物以后速度变为原来的速度，为防止物体的速度越来越大
-            velocitySelf = velocitySelf.normalized * (new Vector3(3, 0, 3).magnitude);
-        }
-        velocitySelf += (Vector2)reverseForce;
-        Move(velocitySelf);
-        IsTurn = false;
-
-    }
-
-/*    public Vector2 rotateToVector(float orientation)
-    {
-        return new Vector2(Mathf.Cos(orientation), Mathf.Sin(orientation));
-    }
-
-    public bool FindObstacle(Vector2[]rayDirs, out RaycastHit firstHit)
-    {
-        firstHit = new RaycastHit();
-        bool foundObs = false;
-
-        for(int i=0; i<rayDirs.Length;++i)
-        {
-            int rayDis = (int)((i == 0) ? mainWhiskerLen : sideWhiskerLen);
-            RaycastHit hit;
-            if(Physics.Raycast(transform.position, rayDirs[i],out hit, rayDis))
-            {
-                foundObs = true;
-                firstHit = hit;
-                break;
-            }
-            Debug.DrawLine(transform.position, transform.position*rayDirs[i] * rayDis);
-        }
-        return foundObs;
-    }*/
     public void Move(Vector2 force)
     {
         Vector2 velocityNor = rb.velocity.normalized;
