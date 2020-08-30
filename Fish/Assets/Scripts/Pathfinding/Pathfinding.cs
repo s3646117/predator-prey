@@ -136,6 +136,6 @@ public class Pathfinding : MonoBehaviour
         grid.UpdatePath(path);
 
         // Send path to movement script
-        GetComponent<FishA>().path = path;
+/*        GetComponent<FishA>().path = path;*/
     }
 }
