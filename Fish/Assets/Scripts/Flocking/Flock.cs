@@ -40,6 +40,10 @@ public class Flock : MonoBehaviour
     private float mSpeed = 5.0f;
     public float turningForce = 0.4f;
 
+    public float disToHook = 5.0f;
+    public Vector2 myPosition;
+   
+
     // Use this for initialization
     void Start()
     {
@@ -48,6 +52,7 @@ public class Flock : MonoBehaviour
         squareNeighborRadius = neighborRadius * neighborRadius;
         squareAvoidanceRadius = squareNeighborRadius * avoidanceRadiusMultiplier * avoidanceRadiusMultiplier;
         status = Status.Flocking;
+
         // Create flock
         for (int i = 0; i < startingCount; ++i)
         {
@@ -65,6 +70,8 @@ public class Flock : MonoBehaviour
             agent.Initialize(this);
             agents.Add(agent);
         }
+
+        myPosition = gameObject.transform.position;
     }
 
     // Update is called once per frame
@@ -72,18 +79,22 @@ public class Flock : MonoBehaviour
     {
 
         Vector2 sf = new Vector2();
-        sf = Seek(Manager.targetPosition);
+
 
         switch(status)
         {
             case Status.Flocking:
                 flock();
-                break;
 
+                break;
+            case Status.Flee:
+            
+                break;
+            case Status.Seek:
+ 
+                break;
         }
     }
-
-
 
     public void flock()
     {
@@ -123,33 +134,38 @@ public class Flock : MonoBehaviour
         agents.Remove(agent);
     }
 
-    Vector2 getTarget()
-    {
-        Vector3 mousePos = Input.mousePosition;
-        mousePos.z = 0;
-        Vector2 worldPoint = Camera.main.ScreenToWorldPoint(mousePos);
 
-        return worldPoint;
+
+    public Vector2 getHookPosition()
+    {
+        Vector2 hookPosition = GameObject.FindGameObjectWithTag("Hook").transform.position;
+        return hookPosition;
     }
 
-    void Move(Vector2 newVelocity)
+    public bool feelHook()
     {
-        rb.AddForce(transform.up * maxSpeed);
-        Turn(newVelocity);
-    }
-    void Turn(Vector2 velocity)
-    {
-        float toRotation = (Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg - 90);
-        float rotation = Mathf.LerpAngle(rb.rotation, toRotation, Time.deltaTime * turningForce);
-
-        rb.MoveRotation(rotation);
+        float distance = Vector2.Distance(myPosition, getHookPosition());
+        if (distance < disToHook)
+        {
+            return true;
+        }
+        else
+        { return false; }
     }
 
-    Vector2 Seek(Vector2 target)
-    {
-        Vector2 diff = targetPosition - (Vector2)transform.position;
-        Vector2 desiredVelocity = diff.normalized * maxSpeed;
 
-        return desiredVelocity - rb.velocity;
+
+
+    public void chase()
+    {
+        Move(getHookPosition());
+
+    }
+
+
+    public void Move(Vector2 velocity)
+    {
+        transform.up = velocity;
+        transform.position += (Vector3)velocity * Time.deltaTime;
     }
 }

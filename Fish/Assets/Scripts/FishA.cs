@@ -29,15 +29,15 @@ public class FishA : Fish
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
         target = GetMousePosition();
         myPosition = gameObject.transform.position;
 
         float distance = Vector2.Distance(gameObject.transform.position, target);
 
-        //if (distance < fleeRange)
-            //Flee(target);
+        if (distance < fleeRange)
+            Flee2(target);
         if (distance < seekRange)
             Seek(target);
         else
@@ -55,11 +55,6 @@ public class FishA : Fish
         Vector2 steering = desired - rb.velocity;
         Vector2 newVelocity = rb.velocity + steering;
 
-        // Debug
-        Debug.DrawRay(transform.position, rb.velocity, Color.red);
-        Debug.DrawRay(transform.position, desired, Color.blue);
-        Debug.DrawRay(transform.position, steering, Color.green);
-
         Move(newVelocity);
     }
 
@@ -69,6 +64,17 @@ public class FishA : Fish
         dir.Normalize();
 
         Move(dir);
+    }
+
+    void Flee2(Vector2 target)
+    {
+        Vector2 dir = myPosition - target;
+        if(dir.magnitude>3)
+        {
+            Move(Vector2.zero);
+        }
+        Vector2 desiredVelocity = -dir.normalized * 3.0f;
+        Move(desiredVelocity);
     }
 
     void Idle(Vector2 target)
@@ -101,10 +107,11 @@ public class FishA : Fish
     // Translate screen pos to world pos
     Vector2 GetMousePosition()
     {
-        Vector3 mousePos = Input.mousePosition;
-        mousePos.z = 0;
-        Vector2 worldPoint = Camera.main.ScreenToWorldPoint(mousePos);
-
-        return worldPoint;
+        /*        Vector3 mousePos = Input.mousePosition;
+                mousePos.z = 0;
+                Vector2 worldPoint = Camera.main.ScreenToWorldPoint(mousePos);
+        */
+        Vector2 hookPosi = GameObject.FindGameObjectWithTag("Hook").transform.position;
+        return hookPosi;
     }
 }
