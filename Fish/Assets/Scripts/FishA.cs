@@ -6,6 +6,7 @@ public class FishA : Fish
 {
     public Vector2 myPosition;
     public Vector2 target;
+    public Vector2 step;
     public Vector2 velocity;
     public Vector2 desiredVelocity;
     public float seekRange = 20f;
@@ -23,6 +24,7 @@ public class FishA : Fish
     private Rigidbody2D rb;
 
     public List<Node> path;
+    public float pathWidth = 2.5f;
     
     // Start is called before the first frame update
     void Start()
@@ -35,28 +37,41 @@ public class FishA : Fish
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (path != null && path.Count > 0)
-            target = path[0].position;
-        else
-            target = GetComponent<Pathfinding>().target.position;
-            
+        Steer();
+    }
+
+    void Steer()
+    {
         //target = GetMousePosition();
         myPosition = gameObject.transform.position;
 
-        float distance = Vector2.Distance(gameObject.transform.position, target);
+        //float distance = Vector2.Distance(gameObject.transform.position, target);
 
-        if(!flee)
+        if (path != null && path.Count > 0)
+        {
+            step = path[0].position;
+            target = GetComponent<Pathfinding>().target.position;
+            Seek(target, step);
+        }
+        else
+        {
+            target = GetComponent<Pathfinding>().target.position;
+            Seek(target);
+        }
+
+
+        /*
+        if (!flee)
             Seek(target);
         else
             Flee(target);
+        */
 
         Turn();
     }
 
-    // Replace the following functions with CalculateMove(Behaviour, target vector)? -> not relevant once FSM is implemented?
     void Seek(Vector2 target)
     {
-        //Vector2 desired = (target - myPosition).normalized * maxForce;
         Vector2 desired = target - myPosition;
         float distance = desired.magnitude;
         
@@ -64,7 +79,6 @@ public class FishA : Fish
         {
             // Inside approach range -> slow down
             desired = desired.normalized * maxSpeed * (distance / approachRange);
-            Debug.Log(distance/approachRange);
         }
         else if (distance < arrivedRange)
         {
@@ -80,22 +94,50 @@ public class FishA : Fish
         }
 
         Vector2 steering = desired - rb.velocity;
-
-        //Debug.Log(steering.magnitude < maxForce);
-        //steering = (steering.magnitude < maxForce) ? steering : steering.normalized * maxForce;
-        //Debug.Log(steering);
-
         steering /= rb.mass;
-        //rb.inertia?
+
         Vector2 newVelocity = rb.velocity + steering;
         if (newVelocity.magnitude > maxSpeed)
             newVelocity = newVelocity.normalized * maxSpeed;
 
+        Move(newVelocity);
+    }
 
-        // Debug
-        //Debug.DrawRay(transform.position, rb.velocity, Color.red);
-        //Debug.DrawRay(transform.position, desired, Color.blue);
-        //Debug.DrawRay(transform.position, steering, Color.green);
+    // Path Seek
+    void Seek(Vector2 target, Vector2 step)
+    {
+        Vector2 toTarget = target - myPosition;
+        float distToTarget = toTarget.magnitude;
+
+        Vector2 desired = step - myPosition;
+        float distance = desired.magnitude;
+
+        if (distToTarget < approachRange && distToTarget > arrivedRange)
+        {
+            // Inside approach range -> slow down
+            desired = desired.normalized * maxSpeed * (distance / approachRange);
+        }
+        else if (distToTarget < arrivedRange)
+        {
+            // Inside approach range -> slow down
+            desired = desired.normalized * maxSpeed * (distance / approachRange);
+        }
+        else
+        {
+            // Outside approach range -> maintain speed
+            desired = desired.normalized * maxSpeed;
+        }
+
+        // Smoothing along path, move to next step in path
+        if (distance < pathWidth)
+            path.RemoveAt(0);
+
+        Vector2 steering = desired - rb.velocity;
+        steering /= rb.mass;
+
+        Vector2 newVelocity = rb.velocity + steering;
+        if (newVelocity.magnitude > maxSpeed)
+            newVelocity = newVelocity.normalized * maxSpeed;
 
         Move(newVelocity);
     }
