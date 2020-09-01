@@ -111,10 +111,10 @@ MonoBehaviour:
     y: 30
     width: 1920
     height: 947
-  m_MinSize: {x: 581, y: 494}
-  m_MaxSize: {x: 14002, y: 14044}
+  m_MinSize: {x: 583, y: 494}
+  m_MaxSize: {x: 14004, y: 14044}
   vertical: 0
-  controlID: 89587
+  controlID: 32
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -139,7 +139,7 @@ MonoBehaviour:
   m_MinSize: {x: 306, y: 494}
   m_MaxSize: {x: 10002, y: 14044}
   vertical: 1
-  controlID: 89588
+  controlID: 33
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -164,7 +164,7 @@ MonoBehaviour:
   m_MinSize: {x: 306, y: 222}
   m_MaxSize: {x: 8006, y: 4022}
   vertical: 0
-  controlID: 89589
+  controlID: 34
 --- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -267,8 +267,8 @@ MonoBehaviour:
     y: 0
     width: 307
     height: 947
-  m_MinSize: {x: 275, y: 50}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 277, y: 72}
+  m_MaxSize: {x: 4002, y: 4022}
   m_ActualView: {fileID: 20}
   m_Panes:
   - {fileID: 20}
@@ -387,7 +387,7 @@ MonoBehaviour:
       scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: c24afcffd857fcff9067fcff4c6efcff927bfcff2094fcfff60bfdffc60dfdff6a1efdff4829fdffc429fdff0a44fdff1c5bfdff1e5cfdffb68dfdfff68dfdff8497fdff2298fdffd0a1fdffa4a2fdff041afeffdc1cfeff0893feff8093feffe2a8feff0cb6feff34bdfeff32cafeff22dcfeff56e3feff7ee3feff4c3bfffff03bffff5a46ffff746fffff1aaeffff52aeffff76c3ffffa2caffffe0caffffc6d4ffffecd4ffff68dcffff94dcffff66ddffffb067000000740000449a0000929a00008a9c0000082b0100602b0100f43a01005e42010068420100b64201002e4301000c440100a4440100ae4401006276020004770200e092020052ab0200f4ab02000eac02002acb0200facb0200d8cc02004acd020070cd02007acd020094cd0200127304005887040036880400d8880400a0e6050042e705003cef0500deef05005a020600fc02060044980600e698060086b90600aabf06006efc060010fd0600
+      m_ExpandedIDs: bcbcffff62f9ffffdef9ffff3c3b0000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -537,9 +537,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 5.983465, y: -0.6307701, z: -40.826954}
+    m_Target: {x: 11.75499, y: 3.4069767, z: -9.319129}
     speed: 2
-    m_Value: {x: 5.983465, y: -0.6307701, z: -40.826954}
+    m_Value: {x: 11.814789, y: 3.5116246, z: -9.222039}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -572,9 +572,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 27.855915
+    m_Target: 25.771147
     speed: 2
-    m_Value: 27.855915
+    m_Value: 26.985495
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -639,20 +639,20 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Scenes
+    - Assets/Prefabs
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Scenes
+  - Assets/Prefabs
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\h0oZaMo0j\Documents\RMIT\AI in Games\predator-prey-2020\Fish
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 76}
-    m_SelectedIDs: 60490000
-    m_LastClickedID: 18784
-    m_ExpandedIDs: 000000004a4500004246000076460000004700002e4700009847000060490000964900004a4b00004c4b0000
+    scrollPos: {x: 0, y: 0}
+    m_SelectedIDs: 14300000
+    m_LastClickedID: 12308
+    m_ExpandedIDs: 00000000dc2e000014300000583000003c31000070310000f83100001e3400005c340000be370000c0370000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -680,7 +680,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 000000004a4500004246000076460000004700002e4700009847000060490000964900004a4b00004c4b0000
+    m_ExpandedIDs: 00000000dc2e000014300000583000003c31000070310000f83100001e3400005c340000be370000c0370000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 

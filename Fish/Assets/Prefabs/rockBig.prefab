@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 569117251758884151}
   - component: {fileID: 1676543028857766787}
   m_Layer: 8
-  m_Name: rock (89)
+  m_Name: rockBig
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 119479500362139427}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 159.3, y: 8.958153, z: 26.051247}
+  m_LocalPosition: {x: 159.3, y: 8.958153, z: 0}
   m_LocalScale: {x: 0.546, y: 0.505, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
