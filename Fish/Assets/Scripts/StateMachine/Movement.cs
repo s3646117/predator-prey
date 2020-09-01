@@ -14,7 +14,7 @@ public class Movement : MonoBehaviour
     public Rigidbody2D rb;
     public moveState state;
     public Vector2 velocity;
-    public Vector2 hookPosition;
+    public GameObject hook;
 
     public float seekRange = 20f;
     public int fleeRange = 5;
@@ -31,7 +31,7 @@ public class Movement : MonoBehaviour
 
     public RippleClick rc;
 
-    private GameObject attractFish;
+    //private GameObject attractFish;
     public Manager manager;
   
     const float AgentDensity = 0.08f;
@@ -42,21 +42,35 @@ public class Movement : MonoBehaviour
     public bool chase = false;
     public bool timeCount;
 
+    public FlockAgent agent;
+    public FishA fish;
+    public Pathfinding pathfinding;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         velocity = Vector2.zero;
-        attractFish = manager.getAttractedFish();
+        //attractFish = manager.getAttractedFish();
+
+        agent = GetComponent<FlockAgent>();
+        fish = GetComponent<FishA>();
+        pathfinding = GetComponent<Pathfinding>();
+
+        wander = true;
+        state = moveState.Wander;
+
+        // Easier to track hook with explicit reference to gameobject
+        hook = GameObject.FindGameObjectWithTag("Hook");
     }
     public bool gotRipple;
     private void Update()
     {
         myPosition = gameObject.transform.position;
-        getHookPosition = GameObject.FindGameObjectWithTag("Hook").transform.position;
-        float distance = Vector2.Distance(gameObject.transform.position, hookPosition);
+        //getHookPosition = GameObject.FindGameObjectWithTag("Hook").transform.position;
+        getHookPosition = hook.transform.position;
+        float distance = Vector2.Distance(gameObject.transform.position, getHookPosition);
 
   
-        checkRippleClick();
         switch (state)
         {
             case moveState.Wander:
@@ -64,19 +78,47 @@ public class Movement : MonoBehaviour
                 {
                     /* Debug.Log("Wander State");*/
 
-                    /* Flocking */
-                    /*  TODO */
+                    // Start flocking
+                    fish.isFlocking = true;
+                    if (agent.isFlocking == false)
+                        agent.JoinFlock();
 
-                    /* Check hook position */
-                    feelHook();
-                    if(feelHook()==true)
+                    // Disable pathfinding script (should not be calculating all the time)
+                    pathfinding.enabled = false;
+
+                    // Only check hook position if it has been moved
+                    if(putHook)
                     {
-                        wander = true;
+                        /* Check hook position */
+                        //feelHook();
+                        if (feelHook() == true)
+                        {
+                            //wander = true; shouldn't this be false?
+                            // EDIT
+                            wander = false;
+                            flee = true;
 
-                        /* Debug.Log("State change to Flee");*/
-                        /* if near hook, FLEE */
-                        state = moveState.Flee;
+                            /* Debug.Log("State change to Flee");*/
+                            /* if near hook, FLEE */
+                            state = moveState.Flee;
+                        }
                     }
+
+                    /* ** Move to Manager.cs ? **
+                    checkRippleClick();
+                    if (checkRippleClick() == true)
+                    {
+                        // Debug.Log("Change to Chase state");
+                        // Go to Chase state 
+                        state = moveState.Chase;
+
+                        // EDIT
+                        wander = false;
+                        chase = true;
+
+                        manager.AttractFish();
+                    }
+                */
 
                 }
                 break;
@@ -85,35 +127,50 @@ public class Movement : MonoBehaviour
                 if(flee==true)
                 {
                     /*  Debug.Log("Flee State");*/
-                    steeringForce += FleeForce();
+                    //steeringForce += FleeForce();
+
+                    // Stop flocking
+                    fish.isFlocking = false;
+                    if (agent.isFlocking == true)
+                        agent.LeaveFlock();
+
+                    // Enable flee behaviour in FishA script
+                    fish.flee = true;
+
+                    // Disable pathfinding script (should not be calculating all the time)
+                    pathfinding.enabled = false;
 
                     /* Debug.Log("Count");*/
                     /* count second */
-                    coounter();
+                    StartCoroutine(coounter());
 
-                    /* Debug.Log("Back to Wander State");*/
-                    /* After count, back to wander */
-                    state = moveState.Wander;
 
-                    /* After Flee and back to wander, Check Ripple */
-                    checkRippleClick();
-                    if (checkRippleClick() == true)
-                    {
-                        /* Debug.Log("Change to Chase state");*/
-                        /* Go to Chase state */
-                        state = moveState.Chase;
-                    }
+
                 }
                 break;
 
             case moveState.Chase:
                 if (chase==true)
                 {
-                    Debug.Log("move state is: chase");
+                    //Debug.Log("move state is: chase");
 
-                    /* Choose a attract fish & change tag to destroy, at Hook script check collider to destroy*/
+                    // **MOVE TO DIFFERENT SCRIPT** -- Manager.cs->InputChangeTarget() ?
+                    /* Choose a attract fish & change tag to destroy, at Hook script check collider to destroy
                     attractFish = manager.getAttractedFish();
                     attractFish.tag = "Destroy";
+                    */
+
+                    // Stop flocking
+                    fish.isFlocking = false;
+                    if (agent.isFlocking == true)
+                        agent.LeaveFlock();
+
+                    // Disable flee behaviour in FishA script
+                    fish.flee = false;
+
+                    // Enable pathfinding script (should not be calculating all the time)
+                    //pathfinding.target = hook.transform;
+                    pathfinding.enabled = true;
 
                     /* The Fish chase to Hook? */
                     /*  TODO */
@@ -126,43 +183,45 @@ public class Movement : MonoBehaviour
     }
 
 
-    public bool checkRippleClick()
-    {
-        if(Input.GetMouseButtonDown(1))
-        {
-            return true;
-        }
-
-        else
-        {
-            return false;
-        }
-    }
-
-
-
     IEnumerator coounter()
     {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(1f);
+        /* Debug.Log("Back to Wander State");*/
+        /* After count, back to wander */
+        state = moveState.Wander;
 
+        // EDIT
+        flee = false;
+        wander = true;
+        fish.flee = false;
+        /* After Flee and back to wander, Check Ripple */
     }
 
     public bool putHook;
     public bool feelHook()
     {
+        bool isHookFelt = false;
         float distance = Vector2.Distance(getHookPosition, myPosition);
+        
         if (distance <= fleeRange)
         {
-            return true;
+            isHookFelt = true;
+            //return true;
         }
 
         else
         {
-            return false;
+            isHookFelt = false;
+            //return false;
         }
+
+        // Done checking for updated hook position
+        putHook = false;
+
+        return isHookFelt;
     }
 
-
+    /*
     public Vector2 SeekForce(Vector2 targetPosition)
     {
         Vector2 myPosition = transform.position;
@@ -278,4 +337,5 @@ public class Movement : MonoBehaviour
         force += Cohesion(neighbours) * 2;
         return force;
     }
+    */
 }

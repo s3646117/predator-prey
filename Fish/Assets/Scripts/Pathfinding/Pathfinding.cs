@@ -6,6 +6,7 @@ public class Pathfinding : MonoBehaviour
 {
     public Transform target;
     public Grid grid;
+    public GameObject hook;
 
     // Nodes to be evaluated
     List<Node> open = new List<Node>();
@@ -18,17 +19,22 @@ public class Pathfinding : MonoBehaviour
     // Target node
     Node targetNode;
 
-    public bool reset;
+    //public bool reset;
     
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        reset = true;
+        //reset = true;
+        hook = GameObject.FindGameObjectWithTag("Hook");
+        target = hook.transform;
+        grid = FindObjectOfType<Grid>();
+
     }
 
     // Update is called once per frame
     void Update()
     {
+        target = hook.transform;
         GeneratePath(); 
         grid.UpdatePath(path);
 
@@ -105,7 +111,7 @@ public class Pathfinding : MonoBehaviour
 
                 if (!open.Contains(n) || pathCost < n.gCost)
                 {
-                    n.EvaluateCost(pathCost, targetNode.position);
+                     n.EvaluateCost(pathCost, targetNode.position);
                     
                     // Set parent to track path
                     n.parent = currentNode;

@@ -4,21 +4,18 @@ using UnityEngine;
 
 public class FishA : Fish
 {
-    public Vector2 myPosition;
-    public Vector2 target;
-    public Vector2 step;
-    public Vector2 velocity;
-    public Vector2 desiredVelocity;
-    public float seekRange = 20f;
+    private Vector2 myPosition;
+    private Vector2 target;
+    private Vector2 step;
+    private Vector2 velocity;
+    private Vector2 desiredVelocity;
     public float approachRange = 2.5f;
     public float fleeRange = 0.2f;
     public float arrivedRange = 0.5f;
 
     public float maxSpeed = 10f;
-    public float acceleration = 0.1f;
-    public float turningForce = 0.1f;
 
-    // DEBUG ONLY - REMOVE
+    public bool isFlocking = true;
     public bool flee = false;
 
     private Rigidbody2D rb;
@@ -37,7 +34,8 @@ public class FishA : Fish
     // Update is called once per frame
     void FixedUpdate()
     {
-        Steer();
+        if(!isFlocking)
+            Steer();
     }
 
     void Steer()
@@ -47,25 +45,25 @@ public class FishA : Fish
 
         //float distance = Vector2.Distance(gameObject.transform.position, target);
 
-        if (path != null && path.Count > 0)
+        if(!flee)
         {
-            step = path[0].position;
-            target = GetComponent<Pathfinding>().target.position;
-            Seek(target, step);
+            if (path != null && path.Count > 0)
+            {
+                step = path[0].position;
+                target = GetComponent<Pathfinding>().target.position;
+                Seek(target, step);
+                //Seek(target);
+            }
+            else
+            {
+                target = GetComponent<Pathfinding>().target.position;
+                Seek(target);
+            }
         }
         else
         {
-            target = GetComponent<Pathfinding>().target.position;
-            Seek(target);
-        }
-
-
-        /*
-        if (!flee)
-            Seek(target);
-        else
             Flee(target);
-        */
+        }
 
         Turn();
     }

@@ -14,9 +14,12 @@ GameObject:
   - component: {fileID: -3608820142864820753}
   - component: {fileID: 130170170338246492}
   - component: {fileID: -8116243271425265306}
+  - component: {fileID: 4594122389949790755}
+  - component: {fileID: 9154240947845137646}
+  - component: {fileID: 4546483684730674736}
   m_Layer: 0
   m_Name: Fish
-  m_TagString: Untagged
+  m_TagString: Fish
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -30,7 +33,7 @@ Transform:
   m_GameObject: {fileID: 8238958173907172944}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.184, y: -0.291, z: 0}
-  m_LocalScale: {x: 0.683, y: 0.7, z: 1}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -153,3 +156,71 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   agentFlock: {fileID: 0}
+  isFlocking: 0
+--- !u!114 &4594122389949790755
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8238958173907172944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a648000754186a41ada6950af2973ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  approachRange: 2.5
+  fleeRange: 0.2
+  arrivedRange: 0.5
+  maxSpeed: 3
+  isFlocking: 1
+  flee: 0
+  pathWidth: 2.5
+--- !u!114 &9154240947845137646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8238958173907172944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1059eba8f9014b64fb58a754a8f98d8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  grid: {fileID: 0}
+  hook: {fileID: 0}
+--- !u!114 &4546483684730674736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8238958173907172944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1336b0e9628160d499c38786ba1d4df2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rb: {fileID: 0}
+  state: 0
+  velocity: {x: 0, y: 0}
+  hook: {fileID: 0}
+  seekRange: 20
+  fleeRange: 5
+  fleeSpeed: 9
+  avoidSpeed: 4
+  myPosition: {x: 0, y: 0}
+  getHookPosition: {x: 0, y: 0}
+  rc: {fileID: 0}
+  manager: {fileID: 0}
+  flee: 0
+  wander: 0
+  chase: 0
+  timeCount: 0
+  agent: {fileID: 0}
+  fish: {fileID: 0}
+  pathfinding: {fileID: 0}
+  gotRipple: 0
+  putHook: 0

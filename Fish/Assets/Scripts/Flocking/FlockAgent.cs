@@ -9,6 +9,7 @@ public class FlockAgent : MonoBehaviour
     public Collider2D AgentCollider { get { return agentCollider; } }
 
     public Flock agentFlock;
+    public bool isFlocking;
 
     // Use this for initialization
     void Start()
@@ -30,11 +31,13 @@ public class FlockAgent : MonoBehaviour
     public void JoinFlock()
     {
         agentFlock.AddFlockAgent(this);
+        isFlocking = true;
     }
 
     public void LeaveFlock()
     {
         agentFlock.RemoveFlockAgent(this);
+        isFlocking = false;
     }
 
 }

@@ -20,6 +20,8 @@ public class Hook : MonoBehaviour
     {
         if(collision.tag=="Destroy")
         {
+            DestroyFlockAgent d = collision.gameObject.GetComponent<DestroyFlockAgent>();
+            d.Destroy();
             Destroy(collision.gameObject);
         }
 
